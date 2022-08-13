@@ -17,7 +17,7 @@ const Box = (): JSX.Element => {
                 console.log(1)
             }}>
                 <boxBufferGeometry />
-                <meshStandardMaterial color="royalblue" />
+                <meshStandardMaterial color="yellow" />
             </mesh>
         </>
     );
