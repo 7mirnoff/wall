@@ -3,7 +3,8 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import {Canvas} from "@react-three/fiber";
 import React from "react";
-import Box from "../features/components/box";
+import Wall from "../features/components/wall";
+import {OrbitControls} from "@react-three/drei";
 
 const Home: NextPage = () => {
   return (
@@ -15,9 +16,11 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-          <Canvas className={styles.canvas}>
-              <pointLight position={[10, 10, 10]} />
-              <Box />
+          <Canvas className={styles.canvas}  dpr={[1, 1.5]}>
+            <pointLight position={[10, 10, 10]} />
+            <ambientLight intensity={0.2} position={[10, 10, 10]} />
+            <Wall />
+            <OrbitControls />
           </Canvas>
       </main>
     </div>
