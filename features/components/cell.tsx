@@ -1,36 +1,59 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {useFrame} from "@react-three/fiber";
 import * as THREE from "three";
-
+import {useGLTF} from "@react-three/drei";
+import {GLTF} from "three-stdlib";
+import {useSpring, animated, config} from "@react-spring/three";
 interface ICell {
   x: number
   y: number
 }
 
+type GLTFResult = GLTF & {
+  nodes: {
+    stone_low_poly_02: THREE.Mesh
+  },
+  materials: {
+    ['stones-blocks']: THREE.MeshStandardMaterial
+  }
+}
+
 const Cell = ({x, y}: ICell): JSX.Element => {
+
+  const { nodes, materials } = useGLTF('/assets/models/stones-blocks.glb') as GLTFResult
   const [hovered, setHovered] = useState(false)
+  const [active, setActive] = useState(false)
 
   useEffect(() => {
     document.body.style.cursor = hovered ? 'pointer' : 'auto'
   }, [hovered])
 
-  const cellRef = useRef<THREE.Mesh>(null)
-  useFrame(() => {
-    if (!cellRef.current) return
-
-    if (hovered) {
-      cellRef.current.position.z = Math.min(cellRef.current.position.z += 0.03, 1.2)
-    } else {
-      cellRef.current.position.z = Math.max(cellRef.current.position.z -= 0.03, 1)
-    }
+  const { scale } = useSpring({
+    scale: active ? 0.55 : 0.45,
+    config: config.wobbly
   })
 
+  const cellRef = useRef<THREE.Group>(null)
+
+  const stone = nodes.stone_low_poly_02
+  const material = materials['stones-blocks']
+  material.side = THREE.FrontSide
+
   return (
-    <mesh ref={cellRef} position={[x + x * 0.1, y + y * 0.1, 0]} onPointerOver={(evt) => { evt.stopPropagation(); setHovered(true)}}
-          onPointerOut={() => setHovered(false)}>
-      <boxBufferGeometry args={[1, 1]} />
-      <meshStandardMaterial color="yellow" />
-    </mesh>
+    <animated.group
+      ref={cellRef}
+      position={[x + x * 0.1, y - y * 0.2, 0]}
+      scale={scale}
+      onClick={(evt) => {evt.stopPropagation(); setActive(!active)}}
+      onPointerOver={(evt) => { evt.stopPropagation(); setHovered(true)}}
+      onPointerOut={(evt) => { evt.stopPropagation(); setHovered(false)}}
+    >
+      <mesh
+        castShadow = { true }
+        receiveShadow = { true }
+        geometry={stone.geometry}
+        material={material}
+      />
+    </animated.group>
   );
 };
 

@@ -2,9 +2,10 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import {Canvas} from "@react-three/fiber";
-import React from "react";
+import React, {Suspense} from "react";
 import Wall from "../features/components/wall";
-import {OrbitControls} from "@react-three/drei";
+import {Loader} from "../features/components/loader/loader";
+import Camera from "../features/components/camera";
 
 const Home: NextPage = () => {
   return (
@@ -16,11 +17,16 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-          <Canvas className={styles.canvas}  dpr={[1, 1.5]}>
-            <pointLight position={[10, 10, 10]} />
-            <ambientLight intensity={0.2} position={[10, 10, 10]} />
-            <Wall />
-            <OrbitControls />
+          <Canvas         shadows className={styles.canvas}  dpr={[1, 1.5]}>
+            <Suspense fallback={<Loader />}>
+              <pointLight           castShadow = { true }
+                                    shadow-mapSize-height={517}
+                                    shadow-mapSize-width={517} position={[10, 20, 10]} />
+              <ambientLight intensity={0.1} position={[10, 10, 10]} />
+              <Wall />
+              <Camera />
+              <gridHelper args={[10, 10]} />
+            </Suspense>
           </Canvas>
       </main>
     </div>
