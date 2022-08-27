@@ -4,7 +4,7 @@ import { useSpring, animated, config } from '@react-spring/three'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { GLTF } from 'three-stdlib'
-interface ICell {
+interface IBrick {
   x: number
   y: number
 }
@@ -18,7 +18,7 @@ type GLTFResult = GLTF & {
   }
 }
 
-const Cell = ({ x, y }: ICell): JSX.Element => {
+const Brick = ({ x, y }: IBrick): JSX.Element => {
   const { nodes, materials } = useGLTF('/assets/models/stones-blocks.glb') as GLTFResult
   const [hovered, setHovered] = useState(false)
   const [active, setActive] = useState(false)
@@ -32,7 +32,7 @@ const Cell = ({ x, y }: ICell): JSX.Element => {
     config: config.wobbly
   })
 
-  const cellRef = useRef<THREE.Group>(null)
+  const BrickGroupRef = useRef<THREE.Group>(null)
 
   const stone = nodes.stone_low_poly_02
   const material = materials['stones-blocks']
@@ -40,7 +40,7 @@ const Cell = ({ x, y }: ICell): JSX.Element => {
 
   return (
     <animated.group
-      ref={cellRef}
+      ref={BrickGroupRef}
       position={[x + x * 0.1, y - y * 0.2, 0]}
       scale={scale}
       onClick={(evt) => {
@@ -61,4 +61,4 @@ const Cell = ({ x, y }: ICell): JSX.Element => {
   )
 }
 
-export default Cell
+export default Brick
